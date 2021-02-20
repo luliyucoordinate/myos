@@ -1,7 +1,7 @@
-GPPPARAMS = -m32 -fno-use-cxa-atexit -fleading-underscore -fno-exceptions -fno-builtin -nostdlib -fno-rtti
+GPPPARAMS = -m32 -fno-use-cxa-atexit -fleading-underscore -fno-exceptions -fno-builtin -nostdlib -fno-rtti -fno-pie
 
 ASPARAMS = --32
-LDPARAMS = -melf_i386
+LDPARAMS = -melf_i386 -no-pie
 
 objects = loader.o kernel.o
 

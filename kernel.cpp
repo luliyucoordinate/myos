@@ -6,6 +6,6 @@ void printf(char* str) {
 }
 
 extern "C" void kernelMain(void* multiboot_structure, unsigned int magicnumber) {
-    printf("hello world!");
+    printf((char*)"hello world!");
     while(1);
 }
