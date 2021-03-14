@@ -116,6 +116,10 @@ InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset, GlobalDescr
 
 InterruptManager::~InterruptManager() {}
 
+uint16_t InterruptManager::HardwareInterruptOffset() {
+    return hardwareInterruptOffset;
+}
+
 void InterruptManager::Activate() {
     if (ActiveInterruptManager != 0) {
         ActiveInterruptManager->Deactivate();
@@ -131,7 +135,7 @@ void InterruptManager::Deactivate() {
     }
 }
 
-uint32_t InterruptManager::handleInterrupt(uint8_t interruptNumber, uint32_t esp) {
+uint32_t InterruptManager::HandleInterrupt(uint8_t interruptNumber, uint32_t esp) {
     if (ActiveInterruptManager != 0) {
         return ActiveInterruptManager->DoHandleInterrupt(interruptNumber, esp);
     }

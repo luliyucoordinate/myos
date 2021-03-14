@@ -25,6 +25,7 @@ public:
     InterruptManager(uint16_t hardwareInterruptOffset, GlobalDescriptorTable* gdt);
     ~InterruptManager();
 
+    uint16_t HardwareInterruptOffset();
     void Activate();
     void Deactivate();
 
@@ -59,7 +60,7 @@ protected:
 
     static void InterruptIgnore();
 
-    static uint32_t handleInterrupt(uint8_t interruptNumber, uint32_t esp);
+    static uint32_t HandleInterrupt(uint8_t interruptNumber, uint32_t esp);
     uint32_t DoHandleInterrupt(uint8_t interruptNumber, uint32_t esp);
 
     static void HandleInterruptRequest0x00();
