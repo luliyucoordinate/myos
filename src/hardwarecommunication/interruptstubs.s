@@ -1,17 +1,17 @@
 .set IRQ_BASE, 0x20
 .section .text
-.extern __ZN16InterruptManager15HandleInterruptEhj
+.extern __ZN4myos21hardwarecommunication16InterruptManager15HandleInterruptEhj
 
 .macro HandleInterruptRequest num
-.global __ZN16InterruptManager26HandleInterruptRequest\num\()Ev
-__ZN16InterruptManager26HandleInterruptRequest\num\()Ev:
+.global __ZN4myos21hardwarecommunication16InterruptManager26HandleInterruptRequest\num\()Ev
+__ZN4myos21hardwarecommunication16InterruptManager26HandleInterruptRequest\num\()Ev:
     movb $\num + IRQ_BASE, (interruptnumber)
     jmp int_bottom
 .endm
 
 .macro HandleException num
-.global __ZN16InterruptManager19HandleException\num\()Ev
-__ZN16InterruptManager19HandleException\num\()Ev:
+.global __ZN4myos21hardwarecommunication16InterruptManager19HandleException\num\()Ev
+__ZN4myos21hardwarecommunication16InterruptManager19HandleException\num\()Ev:
     movb $\num, (interruptnumber)
     jmp int_bottom
 .endm
@@ -65,7 +65,7 @@ int_bottom:
 
     pushl %esp
     push (interruptnumber)
-    call __ZN16InterruptManager15HandleInterruptEhj
+    call __ZN4myos21hardwarecommunication16InterruptManager15HandleInterruptEhj
 
     movl %eax, %esp
 
@@ -75,8 +75,8 @@ int_bottom:
     popl %ds
     popa
 
-.global __ZN16InterruptManager15InterruptIgnoreEv
-__ZN16InterruptManager15InterruptIgnoreEv:
+.global __ZN4myos21hardwarecommunication16InterruptManager15InterruptIgnoreEv
+__ZN4myos21hardwarecommunication16InterruptManager15InterruptIgnoreEv:
 
     iret
 

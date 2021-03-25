@@ -1,6 +1,10 @@
-#include "interrupts.h"
+#include "hardwarecommunication/interrupts.h"
+
+using namespace myos::common;
+using namespace myos::hardwarecommunication;
 
 void printf(const char*);
+void printfHex(uint8_t);
 
 InterruptHandler::InterruptHandler(uint8_t interruptNumber, InterruptManager* interruptManager) {
     this->interruptNumber = interruptNumber;
@@ -146,11 +150,8 @@ uint32_t InterruptManager::DoHandleInterrupt(uint8_t interruptNumber, uint32_t e
     if (handlers[interruptNumber] != 0) {
         esp = handlers[interruptNumber]->HandleInterrupt(esp);
     } else if (interruptNumber != hardwareInterruptOffset) {
-        char* foo = (char*)"UNHANDLED INTERRUPT 0X00";
-        const char* hex = "0123456789ABCDEF";
-        foo[22] = hex[(interruptNumber >> 4) & 0x0f];
-        foo[23] = hex[interruptNumber & 0x0f];
-        printf((const char*)foo);
+        printf("UNHANDLED INTERRUPT 0X");
+        printfHex(interruptNumber);
     }
 
     if (hardwareInterruptOffset <= interruptNumber && interruptNumber < hardwareInterruptOffset + 16) {
