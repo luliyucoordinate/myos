@@ -11,6 +11,19 @@ namespace myos
 {
     namespace hardwarecommunication
     {
+        enum BaseAddressRegisterType {
+            MemoryMapping = 0,
+            InputOutput = 1
+        };
+
+        class BaseAddressRegister {
+        public:
+            bool prefetchable;
+            myos::common::uint8_t* address;
+            myos::common::uint32_t size;
+            BaseAddressRegisterType type;
+        };
+
         class PeripheralComponentInterconnectDeviceDescriptor {
         public:
             PeripheralComponentInterconnectDeviceDescriptor();
@@ -50,11 +63,16 @@ namespace myos
 
             bool DeviceHasFunctions(myos::common::uint8_t bus, myos::common::uint8_t device);
 
-            void SelectDrivers(myos::drivers::DriverManager* driverManager);
+            void SelectDrivers(myos::drivers::DriverManager* driverManager, myos::hardwarecommunication::InterruptManager* interrupts);
+            myos::drivers::Driver* GetDriver(PeripheralComponentInterconnectDeviceDescriptor dev, myos::hardwarecommunication::InterruptManager* interrupts);
 
             PeripheralComponentInterconnectDeviceDescriptor GetDeviceDescriptor(myos::common::uint8_t bus, 
                 myos::common::uint8_t device, 
                 myos::common::uint8_t function);
+            BaseAddressRegister GetBaseAddressRegister(myos::common::uint8_t bus, 
+                myos::common::uint8_t device, 
+                myos::common::uint8_t function,
+                myos::common::uint8_t bar);
         private:
             Port32Bit dataPort;
             Port32Bit commandPort;
