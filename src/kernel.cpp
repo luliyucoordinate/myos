@@ -130,7 +130,7 @@ extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber) {
     drvManager.AddDriver(&keyboard);
 
 #ifdef GRAPHICMODE 
-    MouseDriver mouse(&interrupts, &mousehandler);
+    MouseDriver mouse(&interrupts, &desktop);
 #else
     MouseToConsole mousehandler;
     MouseDriver mouse(&interrupts, &mousehandler);
