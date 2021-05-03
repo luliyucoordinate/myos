@@ -29,7 +29,7 @@ void Desktop::OnMouseUp(uint8_t button) {
     CompositeWidget::OnMouseUp(MouseX, MouseY, button);
 }
 
-void Desktop::OnMouseMove(int32_t x, int32_t y) {
+void Desktop::OnMouseMove(int8_t x, int8_t y) {
     x /= 4; 
     y /= 4;
 

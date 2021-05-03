@@ -103,8 +103,8 @@ void CompositeWidget::OnMouseMove(int32_t x, int32_t y, int32_t nx, int32_t ny) 
         if (children[i]->ContainsCoordinate(nx - this->x, ny - this->y)) {
             if (firstChild != i) {
                 children[i]->OnMouseMove(x - this->x, y - this->y, nx - this->x, ny - this->y);
-                break;
             }
+            break;
         }
     }
 }

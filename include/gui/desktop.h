@@ -11,10 +11,10 @@ namespace myos {
             Desktop(common::int32_t w, common::int32_t h, common::uint8_t r, common::uint8_t g, common::uint8_t b);
             ~Desktop();
 
-            void Draw(common::GraphicsContext* gc);
-            void OnMouseDown(common::uint8_t button);
-            void OnMouseUp(common::uint8_t button);
-            void OnMouseMove(common::int32_t x, common::int32_t y);
+            void Draw(common::GraphicsContext* gc) override;
+            void OnMouseDown(common::uint8_t button) override;
+            void OnMouseUp(common::uint8_t button) override;
+            void OnMouseMove(common::int8_t x, common::int8_t y) override;
         private:
             common::uint32_t MouseX, MouseY;
         };

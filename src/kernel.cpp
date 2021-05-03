@@ -79,7 +79,7 @@ public:
                                 (VideoMemory[y * 80 + x] & 0x00ff);
     }
     
-    void OnMouseMove(int8_t nx, int8_t ny) {
+    void OnMouseMove(int8_t nx, int8_t ny) override {
         uint16_t* VideoMemory = (uint16_t*)0xb8000;
         VideoMemory[y * 80 + x] = ((VideoMemory[y * 80 + x] & 0xf000) >> 4) |
                                 ((VideoMemory[y * 80 + x] & 0x0f00) << 4) |
@@ -116,6 +116,7 @@ extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber) {
     GlobalDescriptorTable gdt;
     InterruptManager interrupts(0x20, &gdt);
 
+#define GRAPHICMODE
 #ifdef GRAPHICMODE 
     Desktop desktop(320, 200, 0x00, 0x00, 0xa8);
 #endif

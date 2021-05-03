@@ -39,13 +39,13 @@ namespace myos {
             virtual void GetFocus(Widget* widget);
             virtual bool AddChild(Widget* child);
 
-            virtual void Draw(common::GraphicsContext* gc);
-            virtual void OnMouseDown(common::int32_t x, common::int32_t y, common::uint8_t button);
-            virtual void OnMouseUp(common::int32_t x, common::int32_t y, common::uint8_t button);
-            virtual void OnMouseMove(common::int32_t x, common::int32_t y, common::int32_t nx, common::int32_t ny);
+            virtual void Draw(common::GraphicsContext* gc) override;
+            virtual void OnMouseDown(common::int32_t x, common::int32_t y, common::uint8_t button) override;
+            virtual void OnMouseUp(common::int32_t x, common::int32_t y, common::uint8_t button) override;
+            virtual void OnMouseMove(common::int32_t x, common::int32_t y, common::int32_t nx, common::int32_t ny) override;
 
-            virtual void OnKeyDown(char x);
-            virtual void OnKeyUp(char x);
+            virtual void OnKeyDown(char x) override;
+            virtual void OnKeyUp(char x) override;
         private:
             Widget* children[100];
             common::int32_t numClidren;
