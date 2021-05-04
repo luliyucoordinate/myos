@@ -9,6 +9,7 @@
 #include "gui/desktop.h"
 #include "gui/window.h"
 #include "multitasking.h"
+#include "memorymanagement.h"
 
 using namespace myos;
 using namespace myos::common;
@@ -128,11 +129,33 @@ void taskB() {
 extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber) {
     GlobalDescriptorTable gdt;
 
+    size_t heap = 10 * 1024 * 1024;
+    uint32_t* memupper = (uint32_t*)((size_t)multiboot_structure + 8);
+    printfHex(((*memupper) >> 24) & 0xff);
+    printfHex(((*memupper) >> 16) & 0xff);
+    printfHex(((*memupper) >> 8) & 0xff);
+    printfHex(((*memupper) >> 0) & 0xff);
+
+    MemoryManager memoryManager(heap, (*memupper) * 1024 - heap - 10 * 1024);
+
+    printf("\n heap: 0x");
+    printfHex((heap >> 24) & 0xff);
+    printfHex((heap >> 16) & 0xff);
+    printfHex((heap >> 8) & 0xff);
+    printfHex((heap >> 0) & 0xff);
+
+    void* allocated = memoryManager.malloc(1024);
+    printf("\n allocated: 0x");
+    printfHex(((size_t)allocated >> 24) & 0xff);
+    printfHex(((size_t)allocated >> 16) & 0xff);
+    printfHex(((size_t)allocated >> 8) & 0xff);
+    printfHex(((size_t)allocated >> 0) & 0xff);
+
     TaskManger taskManger;
-    Task task1(&gdt, taskA);
-    Task task2(&gdt, taskB);
-    taskManger.AddTask(&task1);
-    taskManger.AddTask(&task2);
+    // Task task1(&gdt, taskA);
+    // Task task2(&gdt, taskB);
+    // taskManger.AddTask(&task1);
+    // taskManger.AddTask(&task2);
 
     InterruptManager interrupts(0x20, &gdt, &taskManger);
 
