@@ -4,6 +4,23 @@ using namespace myos::common;
 using namespace myos::drivers;
 using namespace myos::hardwarecommunication;
 
+RawDataHandler::RawDataHandler(amd_am79c973* backend) {
+    this->backend = backend;
+    backend->SetHandler(this);
+}
+
+RawDataHandler::~RawDataHandler() {
+    backend->SetHandler(0);
+}
+
+bool RawDataHandler::OnRawDataReceived(uint8_t* buffer, uint32_t size) {
+    return false;
+}
+
+void RawDataHandler::Send(uint8_t* buffer, uint32_t size) {
+    backend->Send(buffer, size);
+}
+
 amd_am79c973::amd_am79c973(PeripheralComponentInterconnectDeviceDescriptor* dev, InterruptManager* interrupts) 
     : Driver(),
       InterruptHandler(dev->interrupt + interrupts->HardwareInterruptOffset(), interrupts),
@@ -14,6 +31,8 @@ amd_am79c973::amd_am79c973(PeripheralComponentInterconnectDeviceDescriptor* dev,
       registerAddressPort(dev->portBase + 0x12),
       resetPort(dev->portBase + 0x14),
       busConstrolRegisterDataPort(dev->portBase + 0x16) {
+
+    handler = 0;
     currentSendBuffer = 0;
     currentRecvBuffer = 0;
 
@@ -133,13 +152,27 @@ void amd_am79c973::Receive() {
             if (size > 64) size -= 4;
 
             uint8_t* buffer = (uint8_t*)(recvBufferDesc[currentRecvBuffer].address);
-            for (int i = 0; i < size; i++) {
-                printfHex(buffer[i]);
-                printf(" ");
+            // for (int i = 0; i < size; i++) {
+            //     printfHex(buffer[i]);
+            //     printf(" ");
+            // }
+
+            if (handler != 0) {
+                if (handler->OnRawDataReceived(buffer, size)) {
+                    Send(buffer, size);
+                }
             }
         }
 
         recvBufferDesc[currentRecvBuffer].flags2 = 0;
         recvBufferDesc[currentRecvBuffer].flags = 0x8000f7ff;
     }
+}
+
+void amd_am79c973::SetHandler(RawDataHandler* handler) {
+    this->handler = handler;
+}
+
+uint64_t amd_am79c973::GetMACAddress() {
+    return initBlock.physicalAddress;
 }

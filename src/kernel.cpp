@@ -11,12 +11,14 @@
 #include "multitasking.h"
 #include "memorymanagement.h"
 #include "drivers/amd_am79c973.h"
+#include "net/etherframe.h"
 
 using namespace myos;
 using namespace myos::common;
 using namespace myos::drivers;
 using namespace myos::hardwarecommunication;
 using namespace myos::gui;
+using namespace myos::net;
 
 void printf(const char* str) {
     static uint16_t* VideoMemory = (uint16_t*)0xb8000;
@@ -197,7 +199,8 @@ extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber) {
 #endif
 
     amd_am79c973* eth0 = (amd_am79c973*)(drvManager.drivers[2]);
-    eth0->Send((uint8_t*)"Hello Network", 13);
+    EtherFrameProvider etherframe(eth0);
+    etherframe.Send(0xffffffffffff, 0x608, (uint8_t*)"Hello Network", 13);
 
     interrupts.Activate();
     
