@@ -25,8 +25,8 @@ amd_am79c973::amd_am79c973(PeripheralComponentInterconnectDeviceDescriptor* dev,
     : Driver(),
       InterruptHandler(dev->interrupt + interrupts->HardwareInterruptOffset(), interrupts),
       MACAddress0Port(dev->portBase),
-      MACAddress2Port(dev->portBase + 0x20),
-      MACAddress4Port(dev->portBase + 0x40),
+      MACAddress2Port(dev->portBase + 0x02),
+      MACAddress4Port(dev->portBase + 0x04),
       registerDataPort(dev->portBase + 0x10),
       registerAddressPort(dev->portBase + 0x12),
       resetPort(dev->portBase + 0x14),
@@ -134,6 +134,11 @@ void amd_am79c973::Send(uint8_t* buffer, int size) {
         *dst = (uint8_t*)(sendBufferDesc[sendDesc].address + size - 1);
         src >= buffer; src--, dst--) *dst = *src;
     
+    printf("Sending: ");
+    for (int i = 0; i < size; i++) {
+        printfHex(buffer[i]);
+        printf(" ");
+    }
     sendBufferDesc[sendDesc].avail = 0;
     sendBufferDesc[sendDesc].flags = 0x8300f000 | ((uint16_t)((-size) & 0xfff));
     sendBufferDesc[sendDesc].flags2 = 0;
@@ -175,4 +180,12 @@ void amd_am79c973::SetHandler(RawDataHandler* handler) {
 
 uint64_t amd_am79c973::GetMACAddress() {
     return initBlock.physicalAddress;
+}
+
+void amd_am79c973::SetIPAddress(uint32_t ip_be) {
+    initBlock.logicalAddress = ip_be;
+}
+
+uint32_t amd_am79c973::GetIPAddress() {
+    return initBlock.logicalAddress;
 }

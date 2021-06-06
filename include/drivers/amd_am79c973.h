@@ -18,6 +18,7 @@ namespace myos {
 
             bool OnRawDataReceived(common::uint8_t* buffer, common::uint32_t size);
             void Send(common::uint8_t* buffer, common::uint32_t size);
+            
         protected:
             amd_am79c973* backend;
         };
@@ -37,6 +38,9 @@ namespace myos {
 
             void SetHandler(RawDataHandler* handler);
             common::uint64_t GetMACAddress();
+
+            void SetIPAddress(common::uint32_t);
+            common::uint32_t GetIPAddress();
         private:
             struct InitializationBlock {
                 common::uint16_t mode;
