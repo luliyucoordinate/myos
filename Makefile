@@ -21,6 +21,7 @@ objects = obj/loader.o \
 		  obj/gui/desktop.o \
 		  obj/net/etherframe.o \
 		  obj/net/arp.o \
+		  obj/net/ipv4.o \
           obj/kernel.o
 
 obj/%.o: src/%.cpp

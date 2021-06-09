@@ -13,6 +13,7 @@
 #include "drivers/amd_am79c973.h"
 #include "net/etherframe.h"
 #include "net/arp.h"
+#include "net/ipv4.h"
 
 using namespace myos;
 using namespace myos::common;
@@ -217,12 +218,21 @@ extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber) {
     EtherFrameProvider etherframe(eth0);
 
     AddressResolutionProtocol arp(&etherframe);
+
+    uint8_t subnet1 = 255, subnet2 = 255, subnet3 = 255, subnet4 = 0;
+    uint32_t subnet_be = ((uint32_t)subnet4 << 24) 
+                    |((uint32_t)subnet3 << 16)
+                    |((uint32_t)subnet2 << 8)
+                    | (uint32_t)subnet1;
+
+    InternetProtocolProvider ipv4(&etherframe, &arp, gip_be, subnet_be);
     // etherframe.Send(0xffffffffffff, 0x608, (uint8_t*)"Hello Network", 13);
 
     interrupts.Activate();
 
     printf("\n\n");
-    arp.Resolve(gip_be);
+    // arp.Resolve(gip_be);
+    ipv4.Send(gip_be, 0x0008, (uint8_t*)"Hello Network", 13);
     
     while(1) {
 #ifdef GRAPHICMODE
