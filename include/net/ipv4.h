@@ -8,8 +8,8 @@
 namespace myos {
     namespace net {
         struct InternetProtocolV4Message {
-            common::uint8_t version : 4;
             common::uint8_t headerLength : 4;
+            common::uint8_t version : 4;
             common::uint8_t tos;
             common::uint16_t totalLength;
 

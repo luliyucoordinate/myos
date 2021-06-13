@@ -32,6 +32,7 @@ bool InternetControlMessageProtocol::OnInternetProtocolReceived(uint32_t srcIP_B
 
     case 8:
         msg->type = 0;
+        msg->checkSum = 0;
         msg->checkSum = InternetProtocolProvider::CheckSum((uint16_t*)msg, sizeof(InternetControlMessageProtocolMessage));
         return true;
     }
@@ -43,6 +44,7 @@ void InternetControlMessageProtocol::RequestEchoReply(uint32_t ip_be) {
     icmp.type = 8;
     icmp.code = 0;
     icmp.data = 0x3713; // 0x1337
+    icmp.checkSum = 0;
     icmp.checkSum = InternetProtocolProvider::CheckSum((uint16_t*)&icmp, sizeof(InternetControlMessageProtocolMessage));
     InternetProtocolHandler::Send(ip_be, (uint8_t*)&icmp, sizeof(InternetControlMessageProtocolMessage));
 }

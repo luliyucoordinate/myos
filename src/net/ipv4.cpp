@@ -67,6 +67,7 @@ bool InternetProtocolProvider::OnEtherFrameReceived(uint8_t* buffer, uint32_t si
         ipMessage->srcIP = tmp;
 
         ipMessage->timeToLive = 0x40;
+        ipMessage->checkSum = 0;
         ipMessage->checkSum = CheckSum((uint16_t*)ipMessage, 4 * ipMessage->headerLength);
     }
     return sendBack;
@@ -89,7 +90,7 @@ void InternetProtocolProvider::Send(uint32_t dstIP_BE, uint8_t protocol, uint8_t
 
     message->dstIP = dstIP_BE;
     message->srcIP = backend->GetIPAddress();
-
+    message->checkSum = 0;
     message->checkSum = CheckSum((uint16_t*)message, sizeof(InternetProtocolV4Message));
 
     uint8_t* databuffer = buffer + sizeof(InternetProtocolV4Message);
