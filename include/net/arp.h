@@ -29,6 +29,7 @@ namespace myos {
             void RequestMACAddress(common::uint32_t IP_BE);
             common::uint64_t Resolve(common::uint32_t IP_BE);
             common::uint64_t GetMACFromCache(common::uint32_t IP_BE);
+            void BroadcastMACAddress(common::uint32_t IP_BE);
         private:
             common::uint32_t IPcache[128];
             common::uint64_t MACcache[128];

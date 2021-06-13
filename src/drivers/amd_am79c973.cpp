@@ -106,8 +106,6 @@ void printf(const char*);
 void printfHex(uint8_t);
 
 uint32_t amd_am79c973::HandleInterrupt(common::uint32_t esp) {
-    printf("INTERRUPT FROM AMD am79c973\n");
-
     registerAddressPort.Write(0);
     uint32_t temp = registerDataPort.Read();
 
@@ -116,7 +114,7 @@ uint32_t amd_am79c973::HandleInterrupt(common::uint32_t esp) {
     else if ((temp & 0x1000) == 0x1000) printf("AMD am79c973 MISSED FRAME\n");
     else if ((temp & 0x0800) == 0x0800) printf("AMD am79c973 MEMORY ERROR\n");
     else if ((temp & 0x0400) == 0x0400) Receive();
-    else if ((temp & 0x0200) == 0x0200) printf("AMD am79c973 DATA SEND\n");
+    else if ((temp & 0x0200) == 0x0200) printf(" SEND\n");
 
     registerAddressPort.Write(0);
     registerDataPort.Write(temp);
@@ -134,8 +132,8 @@ void amd_am79c973::Send(uint8_t* buffer, int size) {
         *dst = (uint8_t*)(sendBufferDesc[sendDesc].address + size - 1);
         src >= buffer; src--, dst--) *dst = *src;
     
-    printf("Sending: ");
-    for (int i = 0; i < size; i++) {
+    printf("\nSENDING: ");
+    for (int i = 0; i < (size > 64 ? 64 : size); i++) {
         printfHex(buffer[i]);
         printf(" ");
     }
@@ -147,20 +145,20 @@ void amd_am79c973::Send(uint8_t* buffer, int size) {
 }
 
 void amd_am79c973::Receive() {
-    printf("AMD amd_am79c973 RECEIVED\n");
+    printf("\nRECEIVING: ");
 
     for (;(recvBufferDesc[currentRecvBuffer].flags & 0x80000000) == 0;
         currentRecvBuffer = (currentRecvBuffer + 1) % 8) {
         if (!(recvBufferDesc[currentRecvBuffer].flags & 0x40000000) && 
-            (recvBufferDesc[currentRecvBuffer].flags & 0x30000000) == 0x30000000) { 
-            uint32_t size = recvBufferDesc[currentRecvBuffer].flags && 0xfff;
+            (recvBufferDesc[currentRecvBuffer].flags & 0x03000000) == 0x03000000) { 
+            uint32_t size = recvBufferDesc[currentRecvBuffer].flags & 0xfff;
             if (size > 64) size -= 4;
 
             uint8_t* buffer = (uint8_t*)(recvBufferDesc[currentRecvBuffer].address);
-            // for (int i = 0; i < size; i++) {
-            //     printfHex(buffer[i]);
-            //     printf(" ");
-            // }
+            for (int i = 0; i < (size > 64 ? 64 : size); i++) {
+                printfHex(buffer[i]);
+                printf(" ");
+            }
 
             if (handler != 0) {
                 if (handler->OnRawDataReceived(buffer, size)) {

@@ -84,6 +84,7 @@ void InternetProtocolProvider::Send(uint32_t dstIP_BE, uint8_t protocol, uint8_t
 
     message->ident = 0x0100;
     message->flagsAndOffset = 0x0040; // 0000 0000 0100 0000
+    message->timeToLive = 0x40;
     message->protocol = protocol;
 
     message->dstIP = dstIP_BE;
@@ -112,7 +113,9 @@ uint16_t InternetProtocolProvider::CheckSum(uint16_t* data, uint32_t size) {
         tmp += ((data[i] & 0xff00) >> 8) | ((data[i] & 0x00ff) << 8);
     }
 
+    if (size % 2) tmp += ((uint16_t)((char*)data)[size - 1]) << 8;
+
     while (tmp & 0xffff0000) tmp = (tmp & 0xffff) + (tmp >> 16);
 
-    return ((tmp & 0xff00) >> 8) | ((tmp & 0x00ff) << 8);
+    return ((~tmp & 0xff00) >> 8) | ((~tmp & 0x00ff) << 8);
 }
