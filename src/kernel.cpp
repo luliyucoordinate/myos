@@ -15,6 +15,7 @@
 #include "net/arp.h"
 #include "net/ipv4.h"
 #include "net/icmp.h"
+#include "net/udp.h"
 
 using namespace myos;
 using namespace myos::common;
@@ -132,6 +133,17 @@ void taskB() {
     }
 }
 
+class PrintfUDPHandler : public UserDatagramProtocolHandler {
+public:
+    void HandleUserDatagramProtocolMessage(UserDatagramProtocolSocket* socket, uint8_t* data, uint16_t size) {
+        char* foo = "";
+        for (int i = 0; i < size; i++) {
+            foo[0] = data[i];
+            printf(foo);
+        }
+    }
+};
+
 extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber) {
     GlobalDescriptorTable gdt;
 
@@ -228,6 +240,7 @@ extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber) {
 
     InternetProtocolProvider ipv4(&etherframe, &arp, gip_be, subnet_be);
     InternetControlMessageProtocol icmp(&ipv4);
+    UserDatagramProtocolProvider udp(&ipv4);
     // etherframe.Send(0xffffffffffff, 0x608, (uint8_t*)"Hello Network", 13);
 
     interrupts.Activate();
@@ -237,6 +250,10 @@ extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber) {
     // ipv4.Send(gip_be, 0x0008, (uint8_t*)"Hello Network", 13);
     arp.BroadcastMACAddress(gip_be);
     icmp.RequestEchoReply(gip_be);
+
+    PrintfUDPHandler udphandler;
+    UserDatagramProtocolSocket* socket = udp.Listen(1234);
+    udp.Bind(socket, &udphandler);
     
     while(1) {
 #ifdef GRAPHICMODE

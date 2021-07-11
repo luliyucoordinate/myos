@@ -23,6 +23,7 @@ objects = obj/loader.o \
 		  obj/net/arp.o \
 		  obj/net/ipv4.o \
 		  obj/net/icmp.o \
+		  obj/net/udp.o \
           obj/kernel.o
 
 obj/%.o: src/%.cpp
